@@ -14,11 +14,25 @@ class MovieDetails extends React.Component {
     }
 
     componentDidMount() {
-        const id = this.props.navigation.state.params.movieID ;
+        const id = this.props.navigation.state.params.movieID;
         this.props.fetchMovieDetails(id);
     }
 
-   
+
+    getGenres(res) {
+        console.log("genres:- ", res);
+        console.log("genres:- ", res.genres);
+        if (res.genres !== undefined) {
+            let names = []
+            for (let genre of res.genres) {
+                names.push(genre.name);
+            }
+            console.log("genres:- " , names.toString());
+            return names.toString();
+        }
+
+    }
+
 
     render() {
         if (this.props.result.loading) {
@@ -29,7 +43,7 @@ class MovieDetails extends React.Component {
             )
         }
         console.log("Details Response:- ", this.props.result);
-         let detailResult = this.props.result.details ;
+        let detailResult = this.props.result.details;
         // let genres = []
         // for (let genre of detailResult.genres) {
         //     genres.push(genre.name);
@@ -41,12 +55,13 @@ class MovieDetails extends React.Component {
 
                 <View style={{ flex: 1, backgroundColor: 'aqua' }}>
 
-                    <View style={{ flex: 3, backgroundColor: 'black',bottom:0.5 }}>
+                    <View style={{ flex: 3, backgroundColor: 'black', bottom: 0.5 }}>
                         <Image source={{ uri: "https://image.tmdb.org/t/p/w780/" + detailResult.backdrop_path }}
                             style={styles.backdrop_image} />
                         <TouchableOpacity onPress={() => this.props.navigation.goBack()}>
                             <Image source={require('./../img/back-arrow.png')} style={{ width: 40, height: 40, padding: 10, margin: 10 }} />
                         </TouchableOpacity>
+
 
                         <View style={styles.bottomRight}>
                             <View style={{ flex: 1 }}>
@@ -54,7 +69,7 @@ class MovieDetails extends React.Component {
                             </View>
                             <View style={styles.name_genre_layout}>
                                 <Text style={styles.titleText}>{detailResult.title}</Text>
-                                {/* <Text numberOfLines={1} style={styles.genreText}>{genres.toString()}</Text> */}
+                                <Text numberOfLines={1} style={styles.genreText}>{this.getGenres(detailResult)}</Text>
                                 <Text style={styles.genreText}>{detailResult.status + ":- " + detailResult.release_date}</Text>
                             </View>
                         </View>
@@ -147,10 +162,10 @@ const styles = StyleSheet.create({
         bottom: 0,
         height: "60%"
     },
-    name_genre_layout:{
-        flex: 2, 
+    name_genre_layout: {
+        flex: 2,
         justifyContent: 'center',
-        top:20
+        top: 20
     }
 });
 
@@ -160,9 +175,9 @@ const styles = StyleSheet.create({
 //Map the redux state to your props.
 const mapStateToProps = state => {
     return {
-      result: state.movieDetailsReducer
+        result: state.movieDetailsReducer
     };
-  }
+}
 
-  
+
 export default connect(mapStateToProps, { fetchMovieDetails })(MovieDetails);
